@@ -54,9 +54,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.instance_id = settings.instance_id
     mongo_repository = MongoRepository(app.state.mongodb)
     if settings.initial_admin_email and settings.initial_admin_password:
-        existing_admin = await mongo_repository.get_user_by_email(settings.initial_admin_email)
-        if existing_admin is None:
-            try:
+        try:
+            existing_admin = await mongo_repository.get_user_by_email(
+                settings.initial_admin_email
+            )
+            if existing_admin is None:
                 await mongo_repository.create_user(
                     email=settings.initial_admin_email,
                     password_hash=hash_password(
@@ -64,8 +66,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
                     ),
                     role=UserRole.ADMIN,
                 )
-            except DuplicateResourceError:
-                pass
+        except DuplicateResourceError:
+            pass
+        except Exception:
+            logger.warning("Initial admin user could not be ensured during startup")
     app.state.cache_service = CacheService(
         client=redis_client,
         default_ttl_seconds=settings.cache_ttl_seconds,

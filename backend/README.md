@@ -76,10 +76,10 @@ Le backend utilise Sentinel via `REDIS_SENTINEL_HOSTS` pour decouvrir le master 
 - `POST /rooms` admin requis
 - `GET /sensors`
 - `POST /sensors` admin requis
-- `POST /measurements`
+- `POST /measurements` admin requis
 - `GET /measurements/latest`
 - `GET /measurements/history`
-- `POST /ingestion/measurements`
+- `POST /ingestion/measurements` cle `X-API-Key` Node-RED requise
 - `GET /metrics`
 
 ## MongoDB
@@ -206,6 +206,7 @@ docker compose ps
 ```
 
 Le backend doit continuer a utiliser Redis via Sentinel apres promotion d'un replica.
+Selon la machine locale, Sentinel peut entrer temporairement en mode TILT apres un arret brutal du master. Attendre la sortie du mode TILT avant de conclure le test de failover.
 
 ## Depannage
 
