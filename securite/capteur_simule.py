@@ -4,7 +4,9 @@ import time
 import random
 
 client = mqtt.Client()
-client.connect("localhost", 1883, 60)
+client.tls_set(ca_certs="securite/certs/ca.crt")
+client.tls_insecure_set(True)
+client.connect("localhost", 8883, 60)
 
 salles = ["A101", "A102", "B201"]
 
